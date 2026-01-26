@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            
+            <div class="card mb-4 bg-light border-0">
+                <div class="card-body py-3">
+                    <form method="GET" action="/add-goal" class="row g-2 align-items-center">
+                        <div class="col-8">
+                            <select name="team_id" class="form-select form-select-sm">
+                                <option value="">-- Show All Players --</option>
+                                {% for team in teams %}
+                                <option value="{{ team.team_id }}" {% if selected_team == team.team_id|string %}selected{% endif %}>
+                                    Filter: {{ team.name }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-4">
+                            <button type="submit" class="btn btn-secondary btn-sm w-100">Apply Filter</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card shadow">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0">⚽ Record a Goal</h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="/add-goal">
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Select Match:</label>
+                            <select name="match_id" class="form-select" required>
+                                {% for match in matches %}
+                                <option value="{{ match.match_id }}">
+                                    {{ match.home_team }} vs {{ match.away_team }} ({{ match.match_date }})
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Who Scored?</label>
+                            <select name="player_id" class="form-select" required>
+                                {% if not players %}
+                                    <option value="" disabled>No players found for this team.</option>
+                                {% endif %}
+                                
+                                {% for player in players %}
+                                <option value="{{ player.player_id }}">
+                                    {{ player.name }} ({{ player.team_name }})
+                                </option>
+                                {% endfor %}
+                            </select>
+                            {% if selected_team %}
+                            <div class="form-text text-success">
+                                <small>Showing only players from selected team.</small>
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Minute Scored:</label>
+                            <input type="number" name="minute" class="form-control" placeholder="e.g. 45" required>
+                        </div>
+
+                        <button type="submit" class="btn btn-success w-100">Add Goal</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

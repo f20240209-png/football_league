@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h3 class="mb-0">📝 Record Match Result</h3>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Home Team</label>
+                            <select name="home_team" class="form-select" required>
+                                <option value="" disabled selected>Select Home Team</option>
+                                {% for team in teams %}
+                                <option value="{{ team.team_id }}">{{ team.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Score</label>
+                            <input type="number" name="home_score" class="form-control" placeholder="0" required>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Away Team</label>
+                            <select name="away_team" class="form-select" required>
+                                <option value="" disabled selected>Select Away Team</option>
+                                {% for team in teams %}
+                                <option value="{{ team.team_id }}">{{ team.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Score</label>
+                            <input type="number" name="away_score" class="form-control" placeholder="0" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label">Date Played</label>
+                        <input type="date" name="match_date" class="form-control" required>
+                    </div>
+
+                    <button type="submit" class="btn btn-success w-100">Update League Table</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

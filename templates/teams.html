@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2 class="mb-4">Premier League Clubs</h2>
+
+<div class="row">
+    {% for team in teams %}
+    <div class="col-md-3 mb-4">
+        <div class="card h-100 shadow-sm border-0 text-center p-3">
+            <img src="{{ team.logo_url }}" class="card-img-top mx-auto" style="width: 80px; height: 80px;" alt="{{ team.name }}">
+            <div class="card-body">
+                <h5 class="card-title">{{ team.name }}</h5>
+                <p class="text-muted small">{{ team.stadium }}</p>
+              <a href="/team/{{ team.team_id }}" class="btn btn-sm btn-outline-primary">View Squad</a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

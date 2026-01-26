@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Football League System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="/">
+    <img src="{{ url_for('static', filename='images/pl_logo2.png') }}" 
+         alt="Logo" 
+         style="height: 30px; margin-right: 10px;">
+    Premier League
+</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="/">Standings</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/results">Results</a></li>
+                    <li class="nav-item"><a class="nav-link text-success" href="/add-goal">⚽ +Goal</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/top-scorers">🏆 Top Scorers</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/teams">Teams</a></li>
+                  <li class="nav-item"><a class="nav-link text-warning" href="/admin/add-match">➕ Add Result</a></li>  
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        {% block content %}{% endblock %}
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <h2 class="mb-4">Match Results</h2>
+
+    <div class="card p-3 mb-4 bg-light">
+        <form method="GET" action="/results" class="row g-3 align-items-end">
+            <div class="col-md-4">
+                <label class="form-label">Filter by Team:</label>
+                <select name="team_id" class="form-select">
+                    <option value="">-- Show All Matches --</option>
+                    {% for team in teams %}
+                    <option value="{{ team.team_id }}">{{ team.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary w-100">Filter</button>
+            </div>
+        </form>
+    </div>
+
+    {% if matches %}
+    <div class="card shadow-sm">
+        <table class="table table-hover mb-0 align-middle text-center">
+            <thead class="table-dark">
+                <tr>
+                    <th>Date</th>
+                    <th class="text-end">Home Team</th>
+                    <th>Score</th>
+                    <th class="text-start">Away Team</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for match in matches %}
+                <tr>
+                    <td class="text-muted small">{{ match.match_date }}</td>
+                    <td class="fw-bold text-end">{{ match.home_team }}</td>
+                    <td>
+                        <span class="badge bg-dark fs-6">
+                            {{ match.home_score }} - {{ match.away_score }}
+                        </span>
+                    </td>
+                    <td class="fw-bold text-start">{{ match.away_team }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="alert alert-info text-center">
+        No matches found. <a href="/admin/add-match">Add one now!</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
