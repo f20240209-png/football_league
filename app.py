@@ -12,15 +12,27 @@ db_config = {
 def get_db_connection():
     return mysql.connector.connect(**db_config)
 # --- ROUTE 1: HOMEPAGE (League Table) ---
+# --- ROUTE 1: HOMEPAGE (League Table) ---
 @app.route('/')
 def index():
     conn = get_db_connection()
-    cursor = conn.cursor(dictionary=True)
-    # We query the VIEW we created in SQL
-    cursor.execute("SELECT * FROM league_standings")
+    cursor = conn.cursor(dictionary=True) 
+
+    # --- NEW SIMPLE QUERY ---
+    # We already have the points in the 'teams' table, so just grab them!
+    query = """
+    SELECT *, 
+           name AS team_name  
+    FROM teams 
+    ORDER BY points DESC, goal_diff DESC
+    """
+    
+    cursor.execute(query)
     standings = cursor.fetchall()
+    
     cursor.close()
     conn.close()
+    
     return render_template('index.html', standings=standings)
 # --- ROUTE 2: TEAM DETAILS ---
 @app.route('/teams')
