@@ -24,11 +24,53 @@ def get_db_connection():
 def home():
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
+    
+    # 1. Fetch the Standings
     cursor.execute("SELECT * FROM teams ORDER BY points DESC, goal_diff DESC")
     teams = cursor.fetchall()
+    
+    # 2. NEW: Calculate Form for every team
+    for team in teams:
+        team_id = team['team_id']
+        
+        # Get last 5 COMPLETED matches for this team (ordered by date, newest first)
+        cursor.execute("""
+            SELECT home_team_id, away_team_id, home_score, away_score
+            FROM matches 
+            WHERE (home_team_id = %s OR away_team_id = %s) 
+            AND home_score IS NOT NULL
+            ORDER BY match_date DESC 
+            LIMIT 5
+        """, (team_id, team_id))
+        
+        recent_matches = cursor.fetchall()
+        
+        form_guide = []
+        
+        for match in recent_matches:
+            # Check if the current team was Home or Away
+            if match['home_team_id'] == team_id:
+                # We were Home
+                if match['home_score'] > match['away_score']:
+                    form_guide.append('W')
+                elif match['home_score'] < match['away_score']:
+                    form_guide.append('L')
+                else:
+                    form_guide.append('D')
+            else:
+                # We were Away
+                if match['away_score'] > match['home_score']:
+                    form_guide.append('W')
+                elif match['away_score'] < match['home_score']:
+                    form_guide.append('L')
+                else:
+                    form_guide.append('D')
+        
+        # Reverse the list so it reads: [Oldest Match] -> [Most Recent Match]
+        team['form'] = form_guide[::-1]
+
     conn.close()
     return render_template('index.html', teams=teams)
-
 
 # --- ROUTE 2: TEAMS LIST (Matches your teams.html) ---
 @app.route('/teams')
