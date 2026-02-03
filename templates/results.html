@@ -2,16 +2,18 @@
 
 {% block content %}
 <div class="container">
-    <h2 class="mb-4">Match Results</h2>
+    <h2 class="mb-4 fw-bold"> Match Results</h2>
 
-    <div class="card p-3 mb-4 bg-light">
+    <div class="card p-3 mb-4 bg-light shadow-sm border-0">
         <form method="GET" action="/results" class="row g-3 align-items-end">
             <div class="col-md-4">
-                <label class="form-label">Filter by Team:</label>
+                <label class="form-label fw-bold">Filter by Team:</label>
                 <select name="team_id" class="form-select">
                     <option value="">-- Show All Matches --</option>
                     {% for team in teams %}
-                    <option value="{{ team.team_id }}">{{ team.name }}</option>
+                    <option value="{{ team.team_id }}" {% if selected_team == team.team_id|string %}selected{% endif %}>
+                        {{ team.name }}
+                    </option>
                     {% endfor %}
                 </select>
             </div>
@@ -22,7 +24,7 @@
     </div>
 
     {% if matches %}
-    <div class="card shadow-sm">
+    <div class="card shadow-sm border-0">
         <table class="table table-hover mb-0 align-middle text-center">
             <thead class="table-dark">
                 <tr>
@@ -35,14 +37,20 @@
             <tbody>
                 {% for match in matches %}
                 <tr>
-                    <td class="text-muted small">{{ match.match_date }}</td>
-                    <td class="fw-bold text-end">{{ match.home_team }}</td>
+                    <td class="text-muted small">{{ match.match_date.strftime('%d %b %Y') }}</td>
+                    <td class="fw-bold text-end">
+                        {{ match.home_team }}
+                        <img src="{{ match.home_logo }}" style="height: 25px; margin-left: 8px;">
+                    </td>
                     <td>
                         <span class="badge bg-dark fs-6">
                             {{ match.home_score }} - {{ match.away_score }}
                         </span>
                     </td>
-                    <td class="fw-bold text-start">{{ match.away_team }}</td>
+                    <td class="fw-bold text-start">
+                        <img src="{{ match.away_logo }}" style="height: 25px; margin-right: 8px;">
+                        {{ match.away_team }}
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -50,7 +58,7 @@
     </div>
     {% else %}
     <div class="alert alert-info text-center">
-        No matches found. <a href="/admin/add-match">Add one now!</a>
+        No matches found for this team.
     </div>
     {% endif %}
 </div>

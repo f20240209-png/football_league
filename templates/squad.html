@@ -2,40 +2,56 @@
 
 {% block content %}
 <div class="container">
-    <div class="text-center mb-5">
-        <img src="{{ team.logo_url }}" style="width: 120px; height: 120px;" class="mb-3">
-        <h1>{{ team.name }}</h1>
-        <h4 class="text-muted">{{ team.stadium }}</h4>
-        <a href="/teams" class="btn btn-outline-secondary mt-2">← Back to Teams</a>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold">
+            <img src="{{ team.logo_url }}" style="height: 50px; margin-right: 15px;">
+            {{ team.name }}
+        </h2>
+        <a href="{{ url_for('teams_list') }}" class="btn btn-secondary">
+            &larr; Back to Teams
+        </a>
     </div>
 
-    <h3 class="mb-3">Squad List</h3>
-    
-    {% if players %}
+    <div class="alert alert-light border shadow-sm">
+        <strong>Manager:</strong> {{ team.manager or 'Unknown' }}
+    </div>
+
     <div class="card shadow-sm">
-        <table class="table table-striped mb-0">
-            <thead class="table-dark">
-                <tr>
-                    <th>#</th>
-                    <th>Player Name</th>
-                    <th>Position</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for player in players %}
-                <tr>
-                    <td><strong>{{ player.shirt_number }}</strong></td>
-                    <td>{{ player.name }}</td>
-                    <td><span class="badge bg-info text-dark">{{ player.position }}</span></td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        <div class="card-header bg-primary text-white fw-bold">
+            Squad List
+        </div>
+        <div class="card-body p-0">
+            <table class="table table-striped mb-0">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Name</th>
+                        <th>Position</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for player in players %}
+                    <tr>
+                        <td>
+                            {% if player.shirt_number %}
+                                <span class="badge bg-secondary rounded-circle">{{ player.shirt_number }}</span>
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+                        <td class="fw-bold">{{ player.name }}</td>
+                        <td>{{ player.position }}</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="3" class="text-center py-4 text-muted">
+                            No players found for this team.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
-    {% else %}
-    <div class="alert alert-warning">
-        No players found for this team yet. (You can add them in the database!)
-    </div>
-    {% endif %}
 </div>
 {% endblock %}
