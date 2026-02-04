@@ -171,11 +171,39 @@ def results():
 def top_scorers():
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
-    cursor.execute("SELECT * FROM top_scorers ORDER BY goals DESC LIMIT 20")
+    
+    # We join top_scorers with teams to get the logo_url based on team_name
+    query = """
+        SELECT ts.player_name, ts.team_name, ts.goals, t.logo_url
+        FROM top_scorers ts
+        LEFT JOIN teams t ON ts.team_name = t.name
+        ORDER BY ts.goals DESC 
+        LIMIT 20
+    """
+    cursor.execute(query)
     scorers = cursor.fetchall()
     conn.close()
     return render_template('top_scorers.html', scorers=scorers)
 
+
+# --- ROUTE: TOP ASSISTS ---
+@app.route('/top-assists')
+def top_assists():
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    
+    # Updated query to join teams and get the logo
+    query = """
+        SELECT ts.player_name as name, ts.team_name, ts.assists, t.logo_url
+        FROM top_scorers ts
+        JOIN teams t ON ts.team_name = t.name
+        ORDER BY ts.assists DESC 
+        LIMIT 20
+    """
+    cursor.execute(query)
+    assists = cursor.fetchall()
+    conn.close()
+    return render_template('top_assists.html', assists=assists)
 
 # =========================================================
 #  SECTION 2: ADMIN PAGES

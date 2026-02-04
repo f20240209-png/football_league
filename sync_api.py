@@ -183,23 +183,45 @@ def sync_all():
     # ==========================================
     # STEP 4: SYNC TOP SCORERS
     # ==========================================
-    print("\n4️⃣  Syncing Top Scorers...")
-    url = f"{BASE_URL}/competitions/{COMPETITION}/scorers?season={SEASON}&limit=20"
+    # ==========================================
+    # STEP 4: SYNC TOP SCORERS & ASSISTS
+    # ==========================================
+    print("\n4️⃣  Syncing Top Scorers and Assists...")
+    url = f"{BASE_URL}/competitions/{COMPETITION}/scorers?season={SEASON}&limit=50"
     response = requests.get(url, headers=headers)
 
     if response.status_code == 200:
-        scorers = response.json()['scorers']
-        for s in scorers:
+        # Clear the old data first to avoid duplicates
+        cursor.execute("TRUNCATE TABLE top_scorers")
+        try:
+            cursor.execute("TRUNCATE TABLE top_assists")
+        except:
+            pass # Skip if you don't have a separate table for assists yet
+
+        scorers_data = response.json()['scorers']
+        for s in scorers_data:
+            p_name = s['player']['name']
+            t_name = s['team']['shortName']
+            goals = s['goals']
+            assists = s.get('assists', 0)
+
+            # Insert into Top Scorers
             cursor.execute("""
                 INSERT INTO top_scorers (player_name, team_name, goals, assists)
                 VALUES (%s, %s, %s, %s)
-            """, (s['player']['name'], s['team']['shortName'], s['goals'], s.get('assists', 0)))
-        conn.commit()
-        print("✅ Top Scorers Updated!")
+            """, (p_name, t_name, goals, assists))
+            
+            # If you want to use a separate table for the Assists Tab:
+            try:
+                cursor.execute("""
+                    INSERT INTO top_assists (name, team_name, assists)
+                    VALUES (%s, %s, %s)
+                """, (p_name, t_name, assists))
+            except:
+                pass
 
-    print("\n🎉 DONE! Refresh your website now.")
-    cursor.close()
-    conn.close()
+        conn.commit()
+        print("✅ Top Scorers and Assists Updated!")
 
 if __name__ == "__main__":
     sync_all()

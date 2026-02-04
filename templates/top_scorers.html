@@ -1,47 +1,41 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 
 {% block content %}
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <h2 class="text-center mb-4">🏆 Top Scorers</h2>
-
-            <div class="card shadow">
-                <div class="card-header bg-warning text-dark fw-bold text-center">
-                    Golden Boot Race
-                </div>
-                <div class="card-body p-0">
-                    <table class="table table-striped mb-0 text-center align-middle">
-                        <thead class="table-dark">
-                            <tr>
-                                <th>Rank</th>
-                                <th class="text-start">Player</th>
-                                <th>Team</th>
-                                <th>Goals</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for player in scorers %}
-                            <tr>
-                                <td class="fw-bold">{{ loop.index }}</td>
-                                <td class="text-start fw-bold">{{ player.player_name }}</td>
-                                <td><span class="badge bg-secondary">{{ player.team_name }}</span></td>
-                                <td class="fs-5 fw-bold text-primary">{{ player.goals }}</td>
-                            </tr>
-                            {% endfor %}
-                            
-                            {% if not scorers %}
-                            <tr>
-                                <td colspan="4" class="text-muted py-4">
-                                    No goals recorded yet. 
-                                    <br><small>Go add some match results!</small>
-                                </td>
-                            </tr>
-                            {% endif %}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+<div class="container mt-5">
+    <h2 class="text-center mb-4">⚽ Top Scorers</h2>
+    
+    <div class="card race-card shadow-lg mx-auto" style="max-width: 800px; border-radius: 15px; overflow: hidden; border: none;">
+        <div class="card-header text-center bg-danger text-white fw-bold">
+            Golden Boot Race
+        </div>
+        <div class="card-body p-0">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-dark">
+                    <tr>
+                        <th class="ps-4">Rank</th>
+                        <th>Player</th>
+                        <th>Team</th>
+                        <th class="text-end pe-4">Goals</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for s in scorers %}
+                    <tr>
+                        <td class="ps-4 fw-bold">{{ loop.index }}</td>
+                        <td class="fw-semibold">{{ s.player_name }}</td>
+                        <td>
+                            <img src="{{ s.logo_url }}" width="25" class="me-2" onerror="this.style.display='none'">
+                            <span class="badge bg-secondary rounded-pill px-3">
+                                {{ s.team_name }}
+                            </span>
+                        </td>
+                        <td class="text-end pe-4 fw-bold text-danger fs-5">
+                            {{ s.goals }}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
