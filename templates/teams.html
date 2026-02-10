@@ -7,7 +7,7 @@
     {% for team in teams %}
     <div class="col-md-3 mb-4">
         <div class="card h-100 shadow-sm border-0 text-center p-3">
-            <img src="{{ team.logo_url }}" class="card-img-top mx-auto" style="width: 80px; height: 80px;" alt="{{ team.name }}">
+            <img src="{{ team.logo }}" class="card-img-top mx-auto" style="width: 80px; height: 80px;" alt="{{ team.name }}">
             <div class="card-body">
                 <h5 class="card-title">{{ team.name }}</h5>
                 <p class="text-muted small">{{ team.stadium }}</p>
