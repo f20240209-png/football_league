@@ -72,9 +72,11 @@
                     {% endif %}
 
                     <tr class="{{ row_class }}">
-                        <td class="ps-3 fw-bold">{{ loop.index }}</td> <td class="fw-bold">
-                            <img src="{{ team.logo_url }}" style="height: 25px; margin-right: 10px;">
-                            <a href="{{ url_for('squad', team_id=team.team_id) }}" class="text-decoration-none text-dark">
+                        <td class="ps-3 fw-bold">{{ loop.index }}</td> 
+                        <td class="fw-bold">
+                            <img src="{{ team.logo }}" style="height: 25px; margin-right: 10px;">
+                            
+                            <a href="{{ url_for('squad', team_id=team.id) }}" class="text-decoration-none text-dark">
                                 {{ team.name }}
                             </a>
                         </td>
@@ -85,24 +87,24 @@
                         <td class="text-center fw-bold">{{ team.goal_diff }}</td>
                         <td class="text-center fw-bold fs-5">{{ team.points }}</td>
                         <td class="text-center" style="min-width: 140px;">
-     {% for result in team.form %}
-        
-        {% if result == 'W' %}
-            <span style="display:inline-block; width:20px; height:20px; background-color:#198754; color:white; border-radius:50%; text-align:center; line-height:20px; font-size:10px; margin-right:2px;">
-                ✔
-            </span>
-        {% elif result == 'D' %}
-            <span style="display:inline-block; width:20px; height:20px; background-color:#6c757d; color:white; border-radius:50%; text-align:center; line-height:20px; font-size:10px; margin-right:2px;">
-                -
-            </span>
-        {% else %}
-            <span style="display:inline-block; width:20px; height:20px; background-color:#dc3545; color:white; border-radius:50%; text-align:center; line-height:20px; font-size:10px; margin-right:2px;">
-                ✖
-            </span>
-        {% endif %}
+                            {% for result in team.form %}
+                                
+                                {% if result == 'W' %}
+                                    <span style="display:inline-block; width:20px; height:20px; background-color:#198754; color:white; border-radius:50%; text-align:center; line-height:20px; font-size:10px; margin-right:2px;">
+                                        ✔
+                                    </span>
+                                {% elif result == 'D' %}
+                                    <span style="display:inline-block; width:20px; height:20px; background-color:#6c757d; color:white; border-radius:50%; text-align:center; line-height:20px; font-size:10px; margin-right:2px;">
+                                        -
+                                    </span>
+                                {% else %}
+                                    <span style="display:inline-block; width:20px; height:20px; background-color:#dc3545; color:white; border-radius:50%; text-align:center; line-height:20px; font-size:10px; margin-right:2px;">
+                                        ✖
+                                    </span>
+                                {% endif %}
 
-    {% endfor %}
-</td>
+                            {% endfor %}
+                        </td>
                     </tr>
                     {% endfor %}
                 </tbody>

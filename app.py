@@ -21,12 +21,13 @@ except Exception as e:
 # --- DATABASE CONFIGURATION ---
 def get_db_connection():
     return mysql.connector.connect(
-        host="mysql.railway.internal",  # <--- WE ARE HARDCODING THIS!
-        user=os.getenv('DB_USER'),
+        host=os.getenv('DB_HOST'),
+        user=os.getenv('DB_USER') or os.getenv('DB_USERNAME') or 'root',
         password=os.getenv('DB_PASSWORD'),
-        database=os.getenv('DB_NAME'),
-        port=3306
+        database=os.getenv('DB_NAME') or os.getenv('DB_DATABASE'),
+        port=int(os.getenv('DB_PORT', 3306))
     )
+
 # =========================================================
 #  SECTION 1: PUBLIC PAGES
 # =========================================================
@@ -149,7 +150,7 @@ def ask_ai():
     
     try:
         response = client.models.generate_content(
-            model="gemini-2.0-flash", # Updated to a reliable model name
+            model="gemini-flash-latest", # Updated to a reliable model name
             contents=prompt
         )
         return jsonify({"answer": response.text})
