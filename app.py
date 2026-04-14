@@ -1,14 +1,18 @@
-from flask import Flask, render_template, request, redirect, url_for, jsonify
+from flask import Flask, render_template, request, redirect, url_for, jsonify,session
 import mysql.connector
 from google import genai as google_genai
 import os
 from dotenv import load_dotenv
 from datetime import datetime
 
+from sync_api import sync_all
+
 load_dotenv()
+
 
 app = Flask(__name__)
 
+app.secret_key = os.getenv("FLASK_SECRET_KEY", "super_secret_fallback_key")
 # --- AI CONFIGURATION ---
 api_key = os.getenv("GEMINI_API_KEY")
 try:
@@ -412,8 +416,54 @@ def top_assists():
 #  SECTION 2: ADMIN PAGES
 # =========================================================
 
+# --- LOGIN ROUTE ---
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        password = request.form.get('password')
+        # Hardcoded password for tomorrow's presentation demo!
+        if password == 'admin123':
+            session['role'] = 'admin'
+            return redirect(url_for('home'))
+        else:
+            return "Invalid Credentials", 401
+            
+    # Simple inline HTML for the login page
+    return '''
+        <div style="text-align:center; margin-top:100px; font-family:sans-serif;">
+            <h2>Admin Login</h2>
+            <form method="POST">
+                <input type="password" name="password" placeholder="Enter Password" required>
+                <button type="submit">Login</button>
+            </form>
+        </div>
+    '''
+
+# --- LOGOUT ROUTE ---
+@app.route('/logout')
+def logout():
+    session.clear() # Destroys the admin session
+    return redirect(url_for('home'))
+
+# --- NEW ROUTE: ADMIN DB SYNC ---
+@app.route('/admin/sync', methods=['POST'])
+def trigger_sync():
+    # 1. Strict RBAC Check: Kick out non-admins
+    if session.get('role') != 'admin':
+        return jsonify({"error": "Unauthorized"}), 403
+        
+    try:
+        # 2. Trigger your bulletproof ETL Pipeline!
+        sync_all() 
+        return jsonify({"success": "ETL Pipeline Executed. Database Synced!"})
+    except Exception as e:
+        print(f"Sync Error: {e}")
+        return jsonify({"error": "Sync failed. Check terminal for errors."}), 500
+
 @app.route('/add-goal', methods=['GET', 'POST'])
 def add_goal():
+    if session.get('role') != 'admin':
+        return "Access Denied: You must be an Admin.", 403
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
 
@@ -445,6 +495,8 @@ def add_goal():
 
 @app.route('/admin/add-match', methods=['GET', 'POST'])
 def add_match():
+    if session.get('role') != 'admin':
+        return "Access Denied: You must be an Admin.", 403
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
 

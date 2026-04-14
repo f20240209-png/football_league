@@ -31,15 +31,30 @@
         }
     </style>
     
-    <div class="d-flex justify-content-center align-items-center mb-4">
-        <img src="{{ url_for('static', filename='images/pl_logo2.png') }}" 
-             alt="PL Logo" 
-             style="height: 75px; margin-right: 20px;">
-        <div class="d-flex flex-column align-items-center"> 
-            <h1 class="fw-bold mb-0 text-dark" style="line-height: 1;">Premier League</h1>
-            <span class="text-muted fw-bold mt-1">Season 2025-2026</span>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        
+        <div class="d-flex align-items-center">
+            <img src="{{ url_for('static', filename='images/pl_logo2.png') }}" 
+                 alt="PL Logo" 
+                 style="height: 75px; margin-right: 20px;">
+            <div class="d-flex flex-column align-items-start"> 
+                <h1 class="fw-bold mb-0 text-dark" style="line-height: 1;">Premier League</h1>
+                <span class="text-muted fw-bold mt-1">Season 2025-2026</span>
+            </div>
         </div>
-    </div>
+
+        <div>
+            {% if session.get('role') == 'admin' %}
+                <button onclick="syncDatabase()" class="btn btn-danger shadow-sm fw-bold">
+                    🔄 Sync Live API Data
+                </button>
+                <a href="/logout" class="btn btn-outline-secondary fw-bold ms-2">Logout</a>
+            {% else %}
+                <a href="/login" class="btn btn-outline-primary shadow-sm fw-bold">Admin Login</a>
+            {% endif %}
+        </div>
+        
+    </div> 
 
     <div class="card shadow-sm border-0">
         <div class="card-header bg-dark text-white fw-bold">
@@ -119,4 +134,32 @@
     </div>
 
 </div>
+
+<script>
+    function syncDatabase() {
+        // Change button text to show it is loading
+        const btn = event.target;
+        const originalText = btn.innerHTML;
+        btn.innerHTML = "⏳ Syncing... Please Wait";
+        btn.disabled = true;
+
+        fetch('/admin/sync', { method: 'POST' })
+            .then(response => response.json())
+            .then(data => {
+                if(data.success) {
+                    alert("✅ " + data.success);
+                    location.reload(); // Refreshes page to show new standings
+                } else {
+                    alert("❌ Error: " + data.error);
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                }
+            })
+            .catch(error => {
+                alert("❌ Critical Error contacting server.");
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            });
+    }
+</script>
 {% endblock %}
